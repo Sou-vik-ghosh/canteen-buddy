@@ -1,0 +1,60 @@
+/* Custom styles for Canteen Buddy v3 (Top Sellers, Order History & Zero Food Wastage) */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slot-card {
+  transition: all 0.2s ease;
+}
+
+.slot-card:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.slot-full {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.pulse-dot {
+  animation: pulseDot 1.6s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.25); }
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: #94a3b8;
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border-color: #fb923c;
+}

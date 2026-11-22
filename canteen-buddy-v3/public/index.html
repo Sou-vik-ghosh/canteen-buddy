@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canteen Buddy — Smart Campus Dining, Top Sellers & Zero Food Wastage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigateHome()">
+        <div class="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center font-extrabold text-lg text-white shadow">
+          CB
+        </div>
+        <div>
+          <span class="font-bold text-xl tracking-tight">Canteen <span class="text-orange-400">Buddy</span></span>
+          <span class="hidden lg:inline-block ml-2 text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+            Zero Food Wastage Edition
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="hidden md:flex items-center gap-5 text-xs lg:text-sm font-semibold">
+        <button onclick="openDealsShortcut()" class="text-amber-300 hover:text-amber-200 flex items-center gap-1.5 transition">
+          <span>🔥</span> Discounted Deals
+        </button>
+        <button onclick="openInfoModal('wastage')" class="text-emerald-300 hover:text-emerald-200 flex items-center gap-1.5 transition">
+          <span>🌱</span> Food Wastage Solution
+        </button>
+        <button onclick="openFeedbackModal()" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+          <span>📋</span> Google Form Feedback
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <span id="userBadge" class="hidden text-xs sm:text-sm bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-orange-300 font-medium"></span>
+        <button id="logoutBtn" onclick="logout()" class="hidden text-xs sm:text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg transition">
+          Logout
+        </button>
+        <button onclick="toggleSidebar()" aria-label="Open Menu" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slide-out Sidebar -->
+  <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden"></div>
+  <aside id="sidebarDrawer" class="fixed top-0 right-0 h-full w-76 bg-slate-900 text-white z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col justify-between p-6">
+    <div>
+      <div class="flex items-center justify-between pb-6 border-b border-slate-800">
+        <span class="font-bold text-lg text-orange-400">Navigation Menu</span>
+        <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">✕</button>
+      </div>
+      <nav class="mt-6 space-y-2">
+        <button onclick="toggleSidebar(); openDealsShortcut();" class="w-full text-left px-4 py-3 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 flex items-center gap-3 transition font-semibold">
+          <span>🔥</span> Discounted Deals
+        </button>
+        <button onclick="toggleSidebar(); openInfoModal('wastage');" class="w-full text-left px-4 py-3 rounded-xl bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center gap-3 transition font-semibold">
+          <span>🌱</span> Food Wastage Solution
+        </button>
+        <button onclick="toggleSidebar(); openInfoModal('about');" class="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-800 flex items-center gap-3 transition font-medium">
+          <span>ℹ️</span> About Canteen Buddy
+        </button>
+        <button onclick="toggleSidebar(); openInfoModal('service');" class="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-800 flex items-center gap-3 transition font-medium">
+          <span>⚡</span> Slot Queue Protection
+        </button>
+        <button onclick="toggleSidebar(); openInfoModal('support');" class="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-800 flex items-center gap-3 transition font-medium">
+          <span>🎧</span> Help & Support
+        </button>
+        <button onclick="toggleSidebar(); openFeedbackModal();" class="w-full text-left px-4 py-3 rounded-xl bg-orange-500/15 text-orange-300 hover:bg-orange-500/25 border border-orange-500/30 flex items-center gap-3 transition font-semibold">
+          <span>📋</span> Feedback & Google Form
+        </button>
+      </nav>
+    </div>
+    <div class="text-xs text-slate-400 border-t border-slate-800 pt-4">
+      Smart Pre-Ordering • Zero Food Waste
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- 1. LANDING / HERO VIEW -->
+    <section id="viewLanding" class="fade-in space-y-8">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden grid md:grid-cols-2">
+        <div class="p-8 sm:p-12 flex flex-col justify-center">
+          <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full w-fit mb-4">
+            🌱 Sustainable Campus Dining • Zero Food Waste
+          </span>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
+            Smart Pre-Orders & <span class="text-orange-500">Zero Wastage</span>
+          </h1>
+          <p class="mt-4 text-slate-600 text-base sm:text-lg leading-relaxed">
+            Pre-book your meals in capped slots, grab flash discounts on surplus items, and help our campus kitchen cook exact quantities with zero waste.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <button onclick="openLoginModal('student')" class="px-6 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/25 transition flex items-center justify-center gap-2">
+              <span>🎓</span> Student Login
+            </button>
+            <button onclick="openLoginModal('staff')" class="px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-lg shadow-slate-900/20 transition flex items-center justify-center gap-2">
+              <span>👨‍🍳</span> Staff / Sales & Wastage Dashboard
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-emerald-700 via-teal-700 to-slate-900 p-8 sm:p-12 text-white flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Project Impact</span>
+            <h2 class="text-2xl font-bold mt-1 mb-5">How Canteen Buddy Solves Food Wastage</h2>
+            <div class="space-y-3.5 text-sm">
+              <div class="bg-white/10 rounded-2xl p-3.5 border border-white/10">
+                <div class="font-bold text-emerald-200">1. Demand-Driven Cooking via Pre-Orders</div>
+                <p class="text-slate-200 text-xs mt-1">Staff see exact order counts per slot ahead of time instead of over-preparing blind batches.</p>
+              </div>
+              <div class="bg-white/10 rounded-2xl p-3.5 border border-white/10">
+                <div class="font-bold text-amber-200">2. Flash Surplus Discounts (Save-Food Deals)</div>
+                <p class="text-slate-200 text-xs mt-1">Items with unsold portions automatically trigger flash discounts so food gets eaten, not thrown away.</p>
+              </div>
+              <div class="bg-white/10 rounded-2xl p-3.5 border border-white/10">
+                <div class="font-bold text-orange-200">3. Top-Selling History Forecasting</div>
+                <p class="text-slate-200 text-xs mt-1">Stored order history ranks Top 1, 2, 3 best sellers so the kitchen preps optimal quantities daily.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/15 flex items-center justify-between text-xs text-emerald-200">
+            <span>Live Food Saved Tracker</span>
+            <span id="landingFoodSavedBadge" class="font-extrabold text-white bg-emerald-500/30 px-3 py-1 rounded-full">0 kg Saved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public Top-Selling & Discounted Deals Showcase -->
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600">🏆 Crowd Favorites</span>
+              <h2 class="text-xl font-extrabold text-slate-900">Today's Top-Selling Dishes</h2>
+            </div>
+          </div>
+          <div id="landingTopSellersList" class="space-y-3"></div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-600">🔥 Zero-Waste Flash Deals</span>
+              <h2 class="text-xl font-extrabold text-slate-900">Discounted Section</h2>
+            </div>
+            <button onclick="openLoginModal('student')" class="text-xs font-bold text-orange-600 hover:underline">Order Now →</button>
+          </div>
+          <div id="landingDealsGrid" class="grid sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. STUDENT PORTAL -->
+    <section id="viewStudent" class="hidden fade-in space-y-6">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-semibold">
+          <span id="stepBadge1" class="px-3 py-1 rounded-full bg-orange-500 text-white">1. Menu & Deals</span>
+          <span class="text-slate-300">→</span>
+          <span id="stepBadge2" class="px-3 py-1 rounded-full bg-slate-100 text-slate-500">2. Limited Slots</span>
+          <span class="text-slate-300">→</span>
+          <span id="stepBadge3" class="px-3 py-1 rounded-full bg-slate-100 text-slate-500">3. Pay & Token</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="toggleStudentOrdersDrawer()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">
+            🧾 My Order History (<span id="myOrdersCount">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- Student Order History Panel -->
+      <div id="studentMyOrdersPanel" class="hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-slate-900">Your Order History & Tokens</h3>
+          <button onclick="toggleStudentOrdersDrawer()" class="text-xs font-bold text-slate-500 hover:text-slate-800">Close ✕</button>
+        </div>
+        <div id="studentMyOrdersList" class="grid sm:grid-cols-2 gap-3"></div>
+      </div>
+
+      <!-- STEP 1: TODAY'S MENU -->
+      <div id="studentStepMenu" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900">Today's Menu & Zero-Waste Deals</h2>
+            <p class="text-slate-500 text-sm">Pre-ordering helps the canteen prepare exact portions with zero food wastage.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="bg-slate-200/70 p-1 rounded-xl flex text-xs font-bold">
+              <button id="filterAllBtn" onclick="setMenuFilter('all')" class="px-3.5 py-2 rounded-lg bg-white text-slate-900 shadow-xs">
+                All Items
+              </button>
+              <button id="filterDiscountBtn" onclick="setMenuFilter('discounted')" class="px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                <span>🔥</span> Discounted Only
+              </button>
+            </div>
+
+            <div class="bg-slate-900 text-white px-5 py-2.5 rounded-2xl flex items-center gap-4 shadow-md">
+              <div>
+                <span class="text-[11px] text-slate-400 block">Cart Total</span>
+                <span id="cartTotalDisplay" class="font-extrabold text-base text-orange-400">₹0</span>
+              </div>
+              <button onclick="goToSlotSelection()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
+                Pick Slot →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="studentMenuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </div>
+
+      <!-- STEP 2: LIMITED CAPACITY SLOTS -->
+      <div id="studentStepSlot" class="hidden max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Anti-Crowding System</span>
+            <h2 class="text-2xl font-extrabold text-slate-900">Select a Limited Pickup Slot</h2>
+            <p class="text-slate-500 text-sm mt-1">Each slot is capped at 5 orders so everyone doesn't rush at 12:00 PM.</p>
+          </div>
+          <button onclick="loadSlots()" class="text-xs font-bold text-orange-600 hover:underline w-fit">↻ Refresh Slot Availability</button>
+        </div>
+
+        <div id="slotFullAlertBanner" class="hidden p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3">
+          <span class="text-xl">⚠️</span>
+          <div>
+            <strong class="block font-bold">Slot Capacity Notice:</strong>
+            <span id="slotFullAlertText"></span>
+          </div>
+        </div>
+
+        <div id="slotGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+          <button onclick="setStudentStep(1)" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50">
+            ← Back to Menu
+          </button>
+          <button onclick="goToPayment()" class="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow">
+            Proceed to Payment →
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT & TOKEN -->
+      <div id="studentStepPayment" class="hidden max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div id="checkoutBox">
+          <h2 class="text-2xl font-extrabold text-slate-900">Order Summary & Payment</h2>
+          <p class="text-slate-500 text-sm mt-1">Your order will be saved to Order History and added to today's top-selling analytics.</p>
+
+          <div class="mt-5 bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-slate-500">Reserved Pickup Slot:</span>
+              <span id="summarySlot" class="font-bold text-orange-600"></span>
+            </div>
+            <div id="summaryItemsList" class="border-t border-slate-200 pt-3 space-y-2 text-sm"></div>
+            <div id="offPeakRow" class="hidden border-t border-slate-200 pt-2 flex justify-between text-xs font-bold text-emerald-600">
+              <span>Off-Peak Early Slot Bonus (5% Extra Off)</span>
+              <span id="summaryOffPeakDiscount">-₹0</span>
+            </div>
+            <div class="border-t border-slate-200 pt-3 flex justify-between font-extrabold text-base">
+              <span>Total Payable</span>
+              <span id="summaryTotal" class="text-slate-900"></span>
+            </div>
+          </div>
+
+          <p id="checkoutError" class="hidden mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700"></p>
+
+          <div class="mt-6 flex items-center justify-between">
+            <button onclick="setStudentStep(2)" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50">
+              ← Change Slot
+            </button>
+            <button id="payNowBtn" onclick="confirmPayment()" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg shadow-emerald-600/20 transition">
+              Pay & Generate Token
+            </button>
+          </div>
+        </div>
+
+        <div id="receiptBox" class="hidden text-center space-y-5">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-3xl font-bold">
+            ✓
+          </div>
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-600">Order Saved to History</span>
+            <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Your Pickup Token</h3>
+            <div id="generatedToken" class="mt-3 inline-block px-6 py-3 rounded-2xl bg-slate-900 text-orange-400 font-mono text-3xl font-extrabold tracking-wider shadow">
+              #CB-101
+            </div>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800">
+            🌱 Thank you! Pre-booking this meal prevented ~0.35 kg of potential kitchen food waste.
+          </div>
+          <div id="receiptDetails" class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left text-sm space-y-2"></div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="resetStudentOrder()" class="flex-1 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition">
+              Place Another Order
+            </button>
+            <button onclick="openFeedbackModal()" class="flex-1 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition">
+              📋 Rate Experience (Google Form)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. STAFF PORTAL -->
+    <section id="viewStaff" class="hidden fade-in space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900">Staff Kitchen, Top Sellers & Zero-Wastage Dashboard</h2>
+          <p class="text-slate-500 text-sm">Track Top 1–3 best sellers from stored order history, prevent food surplus, and manage live orders.</p>
+        </div>
+        <button onclick="refreshStaffDashboard()" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 w-fit">
+          ↻ Sync Analytics & Orders
+        </button>
+      </div>
+
+      <!-- KPI SUMMARY STRIP -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span class="text-xs font-bold uppercase text-slate-400">Stored Order History</span>
+          <div id="kpiTotalOrders" class="text-2xl font-extrabold text-slate-900 mt-1">0</div>
+          <span class="text-xs text-slate-500">Total orders logged</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span class="text-xs font-bold uppercase text-slate-400">Today's Sales Revenue</span>
+          <div id="kpiTotalRevenue" class="text-2xl font-extrabold text-orange-600 mt-1">₹0</div>
+          <span class="text-xs text-slate-500">Across all paid orders</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span class="text-xs font-bold uppercase text-emerald-600">🌱 Food Waste Prevented</span>
+          <div id="kpiFoodSaved" class="text-2xl font-extrabold text-emerald-600 mt-1">0 kg</div>
+          <span class="text-xs text-slate-500">Via demand pre-ordering</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+          <span class="text-xs font-bold uppercase text-slate-400">Batch Utilization</span>
+          <div id="kpiEfficiency" class="text-2xl font-extrabold text-slate-900 mt-1">0%</div>
+          <span class="text-xs text-slate-500">Prepared vs sold ratio</span>
+        </div>
+      </div>
+
+      <!-- TOP-SELLING ITEMS (TOP 1, TOP 2, TOP 3) & FOOD WASTAGE PREVENTION -->
+      <div class="grid lg:grid-cols-12 gap-6">
+        <!-- Top-Selling Leaderboard -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">📊 Order History Insights</span>
+            <h3 class="text-lg font-extrabold text-slate-900">🏆 Top-Selling Foods (Best Sellers)</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Automatically ranked from all stored orders so you know what sells most.</p>
+          </div>
+          <div id="topSellersContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Food Wastage Prevention & Surplus Action Board -->
+        <div class="lg:col-span-7 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">🌱 Sustainability Module</span>
+              <h3 class="text-lg font-extrabold text-slate-900">Food Wastage & Surplus Prevention Monitor</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Compare prepared batches against pre-orders and trigger 1-click surplus flash deals.</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 text-[11px] uppercase">
+                  <th class="py-2.5 px-2">Dish</th>
+                  <th class="py-2.5 px-2">Prepped</th>
+                  <th class="py-2.5 px-2">Sold</th>
+                  <th class="py-2.5 px-2">Unsold</th>
+                  <th class="py-2.5 px-2">Action to Prevent Waste</th>
+                </tr>
+              </thead>
+              <tbody id="wastageTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE INCOMING ORDERS + COMPLETE ORDER HISTORY -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 pulse-dot"></span>
+            <h3 class="text-lg font-extrabold text-slate-900">📥 Incoming Orders & Stored Order History</h3>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-bold">
+            <button onclick="setOrderStatusFilter('ALL')" class="order-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-white">All History</button>
+            <button onclick="setOrderStatusFilter('New')" class="order-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700">New</button>
+            <button onclick="setOrderStatusFilter('Preparing')" class="order-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700">Preparing</button>
+            <button onclick="setOrderStatusFilter('Completed')" class="order-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700">Completed</button>
+          </div>
+        </div>
+        <div id="staffOrdersList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- SLOT CAPACITY MANAGER -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-900">🚦 Slot Capacity Limits (Anti-Rush Control)</h3>
+          <p class="text-xs text-slate-500">Default limit is 5 orders per slot. Once full, new bookings automatically move to the next slot.</p>
+        </div>
+        <div id="staffSlotsGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </div>
+
+      <!-- MENU, BATCH PREP & DISCOUNTS MANAGEMENT -->
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm h-fit">
+          <h3 class="text-lg font-extrabold text-slate-900 mb-4">➕ Add Dish, Batch Qty & Discount</h3>
+          <form onsubmit="addMenuItem(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Item Name</label>
+              <input id="newFoodName" type="text" required placeholder="e.g., Schezwan Fried Rice" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Price (₹)</label>
+                <input id="newFoodPrice" type="number" min="1" required placeholder="80" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Disc (%)</label>
+                <input id="newFoodDiscount" type="number" min="0" max="90" value="0" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Prep Qty</label>
+                <input id="newFoodPrep" type="number" min="1" value="20" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <input id="newFoodAvail" type="checkbox" checked class="w-4 h-4 accent-orange-500" />
+              <label for="newFoodAvail" class="text-sm font-medium text-slate-700">Available on Student Menu</label>
+            </div>
+            <button type="submit" class="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow transition">
+              Save Dish
+            </button>
+          </form>
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <h3 class="text-lg font-extrabold text-slate-900 mb-4">🏷️ Menu, Prep Batches & Discounts</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase">
+                  <th class="py-3 px-2">Item</th>
+                  <th class="py-3 px-2">Base ₹</th>
+                  <th class="py-3 px-2">Disc %</th>
+                  <th class="py-3 px-2">Prep Qty</th>
+                  <th class="py-3 px-2">Final ₹</th>
+                  <th class="py-3 px-2">Status</th>
+                  <th class="py-3 px-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="staffMenuTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOOGLE FORM LINK SETTINGS & FEEDBACK LIST -->
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm h-fit space-y-4">
+          <h3 class="text-lg font-extrabold text-slate-900">📋 Google Form Feedback Link</h3>
+          <p class="text-xs text-slate-500">Update the Google Form URL shown to students in the feedback modal.</p>
+          <input id="staffGoogleFormInput" type="url" placeholder="https://docs.google.com/forms/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:border-orange-500 focus:outline-none" />
+          <button onclick="saveGoogleFormUrl()" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs">
+            Update Google Form Link
+          </button>
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 class="text-lg font-extrabold text-slate-900 mb-4">💬 Student Feedback Submissions</h3>
+          <div id="staffFeedbackList" class="grid sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl fade-in relative">
+      <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      <span id="loginRoleTag" class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-orange-100 text-orange-700">Student Portal</span>
+      <h3 id="loginModalTitle" class="text-2xl font-extrabold text-slate-900 mt-3">Student Login</h3>
+
+      <div class="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+        <span class="text-xs text-slate-600 font-medium">Quick Testing:</span>
+        <button type="button" onclick="fillDemoCredentials()" class="text-xs font-bold text-orange-600 hover:text-orange-700 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200">
+          ⚡ Auto-Fill Demo Login
+        </button>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="mt-5 space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Email</label>
+          <input id="loginEmail" type="email" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Password</label>
+          <input id="loginPassword" type="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+        </div>
+        <p id="loginError" class="text-xs text-red-600 font-semibold hidden"></p>
+        <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow">
+          Login
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FEEDBACK & GOOGLE FORM MODAL -->
+  <div id="feedbackModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl fade-in relative space-y-5">
+      <button onclick="closeFeedbackModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-orange-600">We Value Your Input</span>
+        <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Feedback & Google Form</h3>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="font-bold text-sm text-indigo-950">📋 Official Canteen Google Form</div>
+          <p class="text-xs text-indigo-700 mt-0.5">Submit detailed hygiene, portion-size & zero-wastage feedback via Google Forms.</p>
+        </div>
+        <a id="googleFormExternalLink" href="#" target="_blank" rel="noopener noreferrer"
+          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold text-center shrink-0 transition">
+          Open Google Form ↗
+        </a>
+      </div>
+
+      <form onsubmit="submitFeedback(event)" class="space-y-3 border-t border-slate-100 pt-4">
+        <div class="text-xs font-bold uppercase text-slate-400">Or Send Instant Feedback to Kitchen Staff</div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <input id="fbName" type="text" required placeholder="Your Name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none" />
+          <select id="fbCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none">
+            <option value="Food Quality">Food Quality & Taste</option>
+            <option value="Zero Food Wastage">Portion Size & Zero Wastage</option>
+            <option value="Slot & Pickup Speed">Slot & Pickup Speed</option>
+            <option value="Discounted Deals">Discounted Deals</option>
+          </select>
+        </div>
+        <select id="fbRating" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none">
+          <option value="5">★★★★★ (5 - Excellent)</option>
+          <option value="4">★★★★☆ (4 - Good)</option>
+          <option value="3">★★★☆☆ (3 - Average)</option>
+          <option value="2">★★☆☆☆ (2 - Below Average)</option>
+          <option value="1">★☆☆☆☆ (1 - Poor)</option>
+        </select>
+        <textarea id="fbComment" rows="2" required placeholder="Write your feedback here..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none"></textarea>
+        <button type="submit" class="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow">
+          Submit Quick Feedback
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- INFO & FOOD WASTAGE PROJECT SOLUTION MODAL -->
+  <div id="infoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl fade-in relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeInfoModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      <div id="infoModalContent"></div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
